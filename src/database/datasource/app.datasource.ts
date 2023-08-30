@@ -1,4 +1,6 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
+import { User } from '../../user/user.entity';
+import { Bookmark } from '../../bookmark/bookmark.entity';
 
 export const appDataSourceOptions: DataSourceOptions = {
   type: 'mysql',
@@ -8,7 +10,7 @@ export const appDataSourceOptions: DataSourceOptions = {
   password: 'root',
   database: 'nestjs-beginner',
   timezone: '+00:00',
-  entities: ['*.entity.ts'],
+  entities: [User, Bookmark], // TODO: Need to figure out what glob pattern to use
   migrations: ['migrations/*-migrations.ts'],
   logging: true,
 };
