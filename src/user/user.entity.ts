@@ -2,16 +2,22 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
+  Unique,
   UpdateDateColumn,
 } from 'typeorm';
+import { Bookmark } from '../bookmark/bookmark.entity';
 
-@Entity()
+@Entity({
+  name: 'users',
+})
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
+  @Unique('unique-email', ['email'])
   email: string;
 
   @Column()
@@ -28,4 +34,7 @@ export class User {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => Bookmark, (bookmark) => bookmark.user)
+  bookmarks: Bookmark[];
 }
