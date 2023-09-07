@@ -1,7 +1,12 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
-import { User } from '../../user/user.entity';
-import { Bookmark } from '../../bookmark/bookmark.entity';
-import { Initial1694098624710 } from '../../migrations/1694098624710-Initial';
+
+// Set some relative glob patterns for TypeORM, so you can both run migrations and service the application
+let entities = ['**/*.entity.ts'];
+let migrations = ['src/migrations/*.ts'];
+if (__dirname.includes('dist')) {
+  entities = ['**/*.entity.js'];
+  migrations = ['../src/migrations/*.ts'];
+}
 
 export const appDataSourceOptions: DataSourceOptions = {
   type: 'mysql',
@@ -11,9 +16,8 @@ export const appDataSourceOptions: DataSourceOptions = {
   password: 'root',
   database: 'nestjs-beginner',
   timezone: '+00:00',
-  // TODO: Need to figure out what glob pattern to use between entities and migrations from src and dist
-  entities: [User, Bookmark],
-  migrations: [Initial1694098624710],
+  entities,
+  migrations,
   logging: true,
 };
 export const appDataSource = new DataSource(appDataSourceOptions);
