@@ -27,13 +27,17 @@ export class AuthService {
   }
 
   async login(dto: AuthDto) {
-    const user = await this.userService.getByEmail(dto.email);
+    try {
+      const user = await this.userService.getByEmail(dto.email);
 
-    if ((await argon.verify(user.password, dto.password)) === false) {
+      if ((await argon.verify(user.password, dto.password)) === false) {
+        throw new ForbiddenException();
+      }
+
+      delete user.password;
+      return user;
+    } catch (error) {
       throw new ForbiddenException();
     }
-
-    delete user.password;
-    return user;
   }
 }
