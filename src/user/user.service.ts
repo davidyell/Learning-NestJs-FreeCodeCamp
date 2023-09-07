@@ -8,10 +8,14 @@ export class UserService {
   constructor(private dataSource: DataSource) {}
 
   async save(user: Partial<User>): Promise<User> {
-    return this.dataSource.getRepository(User).save(user);
+    return await this.dataSource.getRepository(User).save(user);
   }
 
-  async get(uuid: UUID): Promise<User> {
-    return this.dataSource.getRepository(User).findOneByOrFail({ id: uuid });
+  async getByUuid(uuid: UUID): Promise<User> {
+    return await this.dataSource.getRepository(User).findOneByOrFail({ id: uuid });
+  }
+
+  async getByEmail(email: string): Promise<User> {
+    return await this.dataSource.getRepository(User).findOneByOrFail({ email });
   }
 }

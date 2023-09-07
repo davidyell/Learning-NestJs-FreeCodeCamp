@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { SignupDto } from './dto';
+import { ForbiddenException, Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { AuthDto } from './dto';
 import * as argon from 'argon2';
 import { UserService } from '../user/user.service';
 
@@ -7,22 +7,33 @@ import { UserService } from '../user/user.service';
 export class AuthService {
   constructor(private userService: UserService) {}
 
-  async register(dto: SignupDto) {
+  async register(dto: AuthDto) {
     // hash the password
     const hashedPassword = await argon.hash(dto.password);
 
-    // persist the user
-    const user = await this.userService.save({
-      email: dto.email,
-      password: hashedPassword,
-    });
+    try {
+      // persist the user
+      const user = await this.userService.save({
+        email: dto.email,
+        password: hashedPassword,
+      });
 
-    // respond
-    delete user.password;
-    return user;
+      // respond
+      delete user.password;
+      return user;
+    } catch (error) {
+      throw new UnprocessableEntityException('Could not register the user');
+    }
   }
 
-  login() {
-    return { message: 'This would log you into your account.' };
+  async login(dto: AuthDto) {
+    const user = await this.userService.getByEmail(dto.email);
+
+    if ((await argon.verify(user.password, dto.password)) === false) {
+      throw new ForbiddenException();
+    }
+
+    delete user.password;
+    return user;
   }
 }
