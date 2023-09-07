@@ -18,7 +18,11 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "typeorm": "typeorm-ts-node-commonjs"
+    "typeorm": "typeorm-ts-node-commonjs",
+    "db:dev:rm": "docker compose rm nestjs-mysql -sfv",
+    "db:dev:up": "docker compose up nestjs-mysql -d",
+    "db:dev:restart": "yarn db:dev:rm && yarn db:dev:up && yarn db:migrate",
+    "db:migrate": "yarn typeorm migration:run -d src/database/datasource/app.datasource.ts"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

@@ -11,7 +11,7 @@ export const appDataSourceOptions: DataSourceOptions = {
   database: 'nestjs-beginner',
   timezone: '+00:00',
   entities: [User, Bookmark], // TODO: Need to figure out what glob pattern to use
-  migrations: ['migrations/*-migrations.ts'],
+  migrations: ['migrations/*.ts'],
   logging: true,
 };
 export const appDataSource = new DataSource(appDataSourceOptions);
