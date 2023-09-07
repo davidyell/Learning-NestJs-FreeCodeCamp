@@ -10,12 +10,7 @@ import { UserService } from './user/user.service';
 import { DataSource } from 'typeorm';
 
 @Module({
-  imports: [
-    TypeOrmModule.forRoot(appDataSourceOptions),
-    AuthModule,
-    UserModule,
-    BookmarkModule,
-  ],
+  imports: [TypeOrmModule.forRoot(appDataSourceOptions), AuthModule, UserModule, BookmarkModule],
   controllers: [AppController],
   providers: [AppService, UserService],
 })
