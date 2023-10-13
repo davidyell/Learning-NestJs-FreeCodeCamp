@@ -2,10 +2,16 @@ import { ForbiddenException, Injectable, UnprocessableEntityException } from '@n
 import { AuthDto } from './dto';
 import * as argon from 'argon2';
 import { UserService } from '../user/user.service';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private jwtService: JwtService,
+    private configService: ConfigService,
+  ) {}
 
   async register(dto: AuthDto) {
     // hash the password
@@ -18,9 +24,7 @@ export class AuthService {
         password: hashedPassword,
       });
 
-      // respond
-      delete user.password;
-      return user;
+      return { access_token: await this.signToken(user.id, user.email) };
     } catch (error) {
       throw new UnprocessableEntityException('Could not register the user');
     }
@@ -34,10 +38,20 @@ export class AuthService {
         throw new ForbiddenException();
       }
 
-      delete user.password;
-      return user;
+      return { access_token: await this.signToken(user.id, user.email) };
     } catch (error) {
-      throw new ForbiddenException();
+      throw new ForbiddenException('Invalid credentials');
     }
+  }
+
+  signToken(userId: string, email: string): Promise<string> {
+    const payload = {
+      sub: userId,
+      email,
+    };
+
+    return this.jwtService.signAsync(payload, {
+      secret: this.configService.getOrThrow('JWT_SECRET'),
+    });
   }
 }
